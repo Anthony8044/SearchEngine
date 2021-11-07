@@ -21,6 +21,7 @@ public class SearchEngineApplication {
 			String regex = "((http|https)://)(www.)?" + "[a-zA-Z0-9@:%._\\+~#?&//=]" + "{2,256}\\.[a-z]"
 					+ "{2,6}\\b([-a-zA-Z0-9@:%" + "._\\+~#?&//=]*)";
 			Pattern p = Pattern.compile(regex);
+			//Run Scanner for user input with loop
 			do {
 				System.out.println("Input x (Size of the URL pool): ");
 				if (scan.hasNextInt()) {
