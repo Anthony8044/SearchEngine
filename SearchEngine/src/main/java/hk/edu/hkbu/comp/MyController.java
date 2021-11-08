@@ -22,9 +22,8 @@ public class MyController {
 		String html = ""; // html to be sent to the user
 		String[] queryArray = query.split(" "); // Split the query by space
 
-		
 		// separate operations by the length of the query
-		//Maximum of 4 parameters can be included search in the search bar
+		// Maximum of 4 parameters can be included search in the search bar
 		if (queryArray.length == 1) {
 			if (queryArray[0].equals("")) {
 				html += " <h3>No search parameters given. Please input text in the search field.</h3>";
@@ -67,7 +66,7 @@ public class MyController {
 
 	}
 
-	//
+	// Read the database and split the records according to the delimiter
 	List<List<String>> returnAllList() {
 		String regex = "\\{(.*?)\\}";
 		String regex2 = "\\.,eD(.*?)\\,./";
@@ -98,24 +97,25 @@ public class MyController {
 		return allRecordsList;
 	}
 
+	// method for searching for a single keyword
 	String keywordSearch(String keyword) {
 		String html = "";
 		List<List<String>> allRecordsList = returnAllList();
+		html += "<h3>Showing keyword results for: " + keyword + "</h3> ";
 
 		for (int i = 0; i < allRecordsList.size(); i++) {
 
 			if (allRecordsList.get(i).get(0).equals("web")) {
 				if (allRecordsList.get(i).get(2).toLowerCase().equals(keyword.toLowerCase())) {
 					System.out.println(allRecordsList.get(i).get(1));
-					html += "<h3>" + allRecordsList.get(i).get(2) + "</h3> " + "<a href='"
+					html += "<h1>" + allRecordsList.get(i).get(3) + "</h1> " + "<a href='"
 							+ allRecordsList.get(i).get(1) + "'target='_blank'>" + allRecordsList.get(i).get(1) + "</a>"
-							+ "<h1>" + allRecordsList.get(i).get(3) + "</h1> ";
+							+ "<p>-----------------------------------------------------------------------</p>";
 				}
-
 			}
 		}
 
-		if (html.equals("")) {
+		if (html.equals("<h3>Showing keyword results for: " + keyword + "</h3> ")) {
 			html += "<h3>No keyword results found.</h3> ";
 		}
 
@@ -125,36 +125,65 @@ public class MyController {
 	String keywordNotSearch(String keyword) {
 		String html = "";
 		List<List<String>> allRecordsList = returnAllList();
+		List<String> getURLlist = new ArrayList<String>();
+
+		html += "<h3>Showing keyword results for not: " + keyword + "</h3> ";
 
 		for (int i = 0; i < allRecordsList.size(); i++) {
 
 			if (allRecordsList.get(i).get(0).equals("web")) {
-				if (!allRecordsList.get(i).get(2).toLowerCase().equals(keyword.toLowerCase())) {
+				if (allRecordsList.get(i).get(2).toLowerCase().equals(keyword.toLowerCase())) {
+					if (!getURLlist.contains(allRecordsList.get(i).get(1))) {
+						getURLlist.add(allRecordsList.get(i).get(1));
+					}
+
+				}
+
+			}
+		}
+		for (int i = 0; i < allRecordsList.size(); i++) {
+
+			if (allRecordsList.get(i).get(0).equals("web")) {
+				if (!allRecordsList.get(i).get(2).toLowerCase().equals(keyword.toLowerCase())
+						&& !allRecordsList.get(i).get(1).contains(getURLlist.toString())) {
 					System.out.println(allRecordsList.get(i).get(1));
-					html += "<h3>" + allRecordsList.get(i).get(2) + "</h3> " + "<a href='"
+					html += "<h1>" + allRecordsList.get(i).get(3) + "</h1> " + "<a href='"
 							+ allRecordsList.get(i).get(1) + "'target='_blank'>" + allRecordsList.get(i).get(1) + "</a>"
-							+ "<h1>" + allRecordsList.get(i).get(3) + "</h1> ";
+							+ "<p>-----------------------------------------------------------------------</p>";
 				}
 
 			}
 		}
 
-		if (html.equals("")) {
+		if (html.equals("<h3>Showing keyword results for not: " + keyword + "</h3> ")) {
 			html += "<h3>No keyword results found.</h3> ";
 		}
 
 		return html;
 	}
 
+	// Iterate through the loop twice to get check if both keywords are in link
 	String keywordAndSearch(String keyword1, String keyword2) {
 		String html = "";
 		List<List<String>> allRecordsList = returnAllList();
+		List<String> getURLlist = new ArrayList<String>();
+		html += "<h3>Showing keyword results for: " + keyword1 + " and " + keyword2 + "</h3> ";
 
 		for (int i = 0; i < allRecordsList.size(); i++) {
 
 			if (allRecordsList.get(i).get(0).equals("web")) {
-				if (allRecordsList.get(i).get(2).toLowerCase().contains(keyword1.toLowerCase())
-						&& allRecordsList.get(i).get(2).toLowerCase().contains(keyword2.toLowerCase())) {
+				if (allRecordsList.get(i).get(2).toLowerCase().equals(keyword1.toLowerCase())) {
+					getURLlist.add(allRecordsList.get(i).get(1));
+					System.out.println(allRecordsList.get(i).get(1));
+				}
+
+			}
+		}
+		for (int i = 0; i < allRecordsList.size(); i++) {
+
+			if (allRecordsList.get(i).get(0).equals("web")) {
+				if (allRecordsList.get(i).get(2).toLowerCase().equals(keyword2.toLowerCase())
+						&& getURLlist.contains(allRecordsList.get(i).get(1))) {
 					System.out.println(allRecordsList.get(i).get(1));
 					html += "<h3>" + allRecordsList.get(i).get(2) + "</h3> " + "<a href='"
 							+ allRecordsList.get(i).get(1) + "'target='_blank'>" + allRecordsList.get(i).get(1) + "</a>"
@@ -164,7 +193,7 @@ public class MyController {
 			}
 		}
 
-		if (html.equals("")) {
+		if (html.equals("<h3>Showing keyword results for: " + keyword1 + " and " + keyword2 + "</h3> ")) {
 			html += "<h3>No keyword results found.</h3> ";
 		}
 
@@ -174,6 +203,7 @@ public class MyController {
 	String keywordOrSearch(String keyword1, String keyword2) {
 		String html = "";
 		List<List<String>> allRecordsList = returnAllList();
+		html += "<h3>Showing keyword results for: " + keyword1 + " or " + keyword2 + "</h3> ";
 
 		for (int i = 0; i < allRecordsList.size(); i++) {
 
@@ -189,7 +219,7 @@ public class MyController {
 			}
 		}
 
-		if (html.equals("")) {
+		if (html.equals("<h3>Showing keyword results for: " + keyword1 + " or " + keyword2 + "</h3> ")) {
 			html += "<h3>No keyword results found.</h3> ";
 		}
 
